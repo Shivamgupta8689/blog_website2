@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react'
-import { Box, TextField, Button, styled, Typography } from '@mui/material'
+import { Box, TextField, Button, styled, Typography, MenuItem } from '@mui/material'
 import API from '../../service/api';
 import { DataContext } from '../../context/DataProvider';
 import { useNavigate } from 'react-router-dom';
@@ -59,12 +59,14 @@ const Text = styled(Typography)`
 `;
 
 const signupInitialValues = {
+   user_type: '',
     name: '',
     username: '',
     password: '',
 }
 
 const loginInitialValues = {
+    user_type: '',
     username: '',
     password: '',
 }
@@ -89,15 +91,16 @@ const Login = ({isUserAuthenticated}) => {
     }
 
     const signupUser = async () => {
-        const { name, username, password } = signup;
+        const { user_type, name, username, password } = signup;
       
-        if (!name || !username || !password) {
+        if (!user_type ||!name || !username || !password) {
           setError("Please fill all fields");
+          return;
         }
       
-        console.log("Sending signup data:", { name, username, password });
+        // console.log("Sending signup data:", { name, username, password });
       
-        let response = await API.userSignup({ name, username, password });
+        let response = await API.userSignup({ user_type, name, username, password });
       
         if(response.isSuccess) {
           setError('');
@@ -109,24 +112,24 @@ const Login = ({isUserAuthenticated}) => {
       }
 
       const loginUser = async () => {
-        const { username, password } = login;
+        const {user_type, username, password } = login;
       
-        if (!username || !password) {
+        if (!user_type ||!username || !password) {
           setError("Please fill all fields");
           return;
         }
       
-        console.log("Sending login data:", { username, password });
+        console.log("Sending login data:", {user_type, username, password });
       
-        let response = await API.userLogin({ username, password });
-      
+        let response = await API.userLogin({ user_type, username, password });
+        console.log(response.data)
         if(response.isSuccess) {
           setError('');
           // setLogin(loginInitialValues);
           sessionStorage.setItem('accessToken',`Bearer ${response.data.accessToken}`);
           sessionStorage.setItem('refreshToken',`Bearer ${response.data.refreshToken}`);
 
-          setAccount({username: response.data.username, name: response.data.name});
+          setAccount({user_type: response.data.user_type, username: response.data.username, name: response.data.name});
           isUserAuthenticated(true);
           navigate('/')
         } else {
@@ -141,6 +144,18 @@ const Login = ({isUserAuthenticated}) => {
         {
             account === 'login' ? 
          <Wrapper>
+         <TextField
+  select
+  variant="standard"
+  name="user_type"
+  onChange={(e)=>onValueChange(e)}
+  label="Select User Type"
+  defaultValue=""
+  fullWidth
+>
+  <MenuItem value="Student">Student</MenuItem>
+  <MenuItem value="Teacher">Teacher</MenuItem>
+</TextField>
         <TextField variant='standard' onChange={(e)=>onValueChange(e)} name='username' label="Enter Username"/>
         <TextField variant='standard' label="Enter Password" onChange={(e)=>onValueChange(e)} name='password'/>
         <LoginButton variant='contained' onClick={()=>loginUser()}>Login</LoginButton>
@@ -153,6 +168,18 @@ const Login = ({isUserAuthenticated}) => {
         :
 
         <Wrapper>
+        <TextField
+  select
+  variant="standard"
+  name="user_type"
+  onChange={(e)=>onInputChange(e)}
+  label="Select User Type"
+  defaultValue=""
+  fullWidth
+>
+  <MenuItem value="Student">Student</MenuItem>
+  <MenuItem value="Teacher">Teacher</MenuItem>
+</TextField>
         <TextField variant='standard' onChange={(e)=>onInputChange(e)} name='name' label="Enter your name"/>
         <TextField variant='standard' onChange={(e)=>onInputChange(e)} name='username' label="Enter Username"/>
         <TextField variant='standard' onChange={(e)=>onInputChange(e)} name='password' label="Enter Password"/>

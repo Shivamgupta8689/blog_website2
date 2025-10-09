@@ -12,7 +12,7 @@ export const signupUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     // console.log("Request Body:", req.body);  // Check incoming data
 
-    const user = { username: req.body.username, name: req.body.name, password: hashedPassword };
+    const user = {user_type: req.body.user_type, username: req.body.username, name: req.body.name, password: hashedPassword };
     // Validation - all fields required
     if (!user) {
       return res.status(400).json({ error: "Name, username, and password are required." });
@@ -32,7 +32,7 @@ export const signupUser = async (req, res) => {
 
 export const loginUser = async (req, res) =>{
   try {
-    const user = await User.findOne({ username: req.body.username });
+    const user = await User.findOne({user_type: req.body.user_type, username: req.body.username });
     if(!user){
       return res.status(400).json({ error: "Invalid username or password" });
     }
@@ -46,7 +46,7 @@ export const loginUser = async (req, res) =>{
     const newToken = new Token({ token: refreshToken });
     console.log("Saving refreshToken:", refreshToken);
     await newToken.save();
-    return res.status(200).json({ accessToken:accessToken, refreshToken:refreshToken, name: user.name, username: user.username });
+    return res.status(200).json({ accessToken:accessToken, refreshToken:refreshToken, name: user.name, username: user.username, user_type: user.user_type });
   } catch (error) {
     return res.status(500).json({msg: 'Error while login in user'});
   }
