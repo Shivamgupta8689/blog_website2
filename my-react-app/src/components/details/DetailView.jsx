@@ -8,7 +8,7 @@ import  API  from '../../service/api';
 
 import  {DataContext } from '../../context/DataProvider';
 import DataProvider from '../../context/DataProvider';
-import Comments from './comments/comments';
+import Comments from './comments/Comments';
 // components
 // import Comments from './comments/Comments';
 
