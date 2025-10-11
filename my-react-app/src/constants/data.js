@@ -1,8 +1,8 @@
 
 export const categories = [
-    { id: 1, name: 'Music' },
-    { id: 2, name: 'Movies' },
-    { id: 3, name: 'Sports' },
-    { id: 4, name: 'Tech' },
-    { id: 5, name: 'Fashion' },
+    { id: 1, name: 'Notice' },
+    { id: 2, name: 'Announcement' },
+    { id: 3, name: 'Schedules' },
+    { id: 4, name: 'Alumini' },
+    { id: 5, name: 'Events' },
 ]
