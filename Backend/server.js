@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(join(__dirname, 'uploads')));
 app.use('/', Router)
 
-const port = 8000;
+const port = process.env.PORT || 8000;
 
 app.listen(port, ()=>{
     console.log(`server is running on port ${port}`);
