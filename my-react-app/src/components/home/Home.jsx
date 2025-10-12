@@ -1,39 +1,58 @@
 import React from 'react'
 import Banner from '../banner/Banner';
 import Categories from './Categories';
-import { Grid } from '@mui/material'; 
+import { Grid, useTheme, useMediaQuery } from '@mui/material'; 
 import Posts from './Posts';
 
 const Home = () => {
-  return (
-    <>
-      <Banner />
-      
-      <Grid container sx={{ width: '100%' }}>
-        {/* Categories - Left side on desktop, Full width on mobile */}
-        <Grid 
-          item 
-          lg={2} 
-          sm={12}
-          xs={12}
-        >
-          <Categories />
-        </Grid>
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-        {/* Posts - Right side on desktop, Full width on mobile (2 per row) */}
-        <Grid 
-          container 
-          item 
-          lg={10} 
-          sm={12}
-          xs={12}
-          spacing={2}
-        >
-          <Posts />
-        </Grid>
-      </Grid>
-    </>
-  )
+    return (
+        <>
+            <Banner />
+            
+            {isMobile ? (
+                // MOBILE VIEW: Categories upar full width, Posts niche 2 per row
+                <Grid container sx={{ width: '100%', padding: 0, margin: 0 }}>
+                    <Grid item xs={12} sx={{ width: '100%', padding: 0 }}>
+                        <Categories />
+                    </Grid>
+                    <Grid 
+                        container 
+                        item 
+                        xs={12}
+                        sx={{ 
+                            width: '100%', 
+                            padding: '8px',
+                            margin: 0
+                        }}
+                    >
+                        <Posts />
+                    </Grid>
+                </Grid>
+            ) : (
+                // DESKTOP VIEW: Categories left, Posts right (4 per row)
+                <Grid container sx={{ width: '100%', padding: 0, margin: 0 }}>
+                    <Grid item lg={2} sx={{ width: '20%' }}>
+                        <Categories />
+                    </Grid>
+                    <Grid 
+                        container 
+                        item 
+                        lg={10}
+                        sx={{ 
+                            width: '80%',
+                            padding: '8px',
+                            margin: 0
+                        }}
+                    >
+                        <Posts />
+                    </Grid>
+                </Grid>
+            )}
+        </>
+    )
 }
 
 export default Home
