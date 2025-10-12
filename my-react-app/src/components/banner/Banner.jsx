@@ -100,8 +100,7 @@ const Subheading = styled(Typography)(({ theme }) => `
 const Banner = () => {
   return (
     <Image>
-        <Heading>Welcome to LTCE Blog</Heading>
-        <Subheading>Learn, Teach, and Collaborate with Excellence</Subheading>
+        
     </Image>
   )
 }
