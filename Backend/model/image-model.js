@@ -1,15 +1,18 @@
 import mongoose from "mongoose";
+
 const imageSchema = new mongoose.Schema({
-    path: {
+    path: {       // optional, you can keep for local storage path
         type: String,
-        required: true
     },
     filename: {
         type: String,
         required: true
     },
-})
+    url: {        // Cloudinary URL
+        type: String,
+        required: true
+    }
+});
 
 const ImageModel = mongoose.model("images", imageSchema);
 export default ImageModel;
-// module.exports = {ImageModel};
