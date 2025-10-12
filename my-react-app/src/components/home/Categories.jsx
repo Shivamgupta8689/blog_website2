@@ -59,7 +59,7 @@ const CategoryContainer = styled(Box)(({ theme }) => `
     
     ${theme.breakpoints.up('lg')} {
         padding: 20px 10px;
-        min-height: 100vh;
+        min-height: auto;
     }
     
     ${theme.breakpoints.between('sm', 'lg')} {
@@ -67,12 +67,14 @@ const CategoryContainer = styled(Box)(({ theme }) => `
     }
     
     ${theme.breakpoints.down('sm')} {
-        padding: 10px 0;
+        padding: 15px;
         width: 100%;
+        margin-bottom: 20px;
     }
     
     @media (max-width: 400px) {
-        padding: 8px 0;
+        padding: 12px;
+        margin-bottom: 15px;
     }
 `);
 
