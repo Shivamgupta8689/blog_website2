@@ -24,7 +24,7 @@ export const API_NOTIFICATION_MESSAGES ={
 export const SERVICE_URLS = {
     userSignup: { url: '/signup', method: 'POST', headers: { 'Content-Type': 'application/json' } },
     userLogin: { url: '/login', method: 'POST', headers: { 'Content-Type': 'application/json' } },
-    uploadFile: { url: '/file/upload', method: 'POST', headers: { 'Content-Type': 'multipart/form-data' } },
+    uploadFile: { url: '/file/upload', method: 'POST'},
     createPost: {url: 'create', method: 'POST'},
     getAllPost: {url: '/posts', method: 'GET', params: true},
     getPostById: {url: '/post', method: 'GET', query: true},
