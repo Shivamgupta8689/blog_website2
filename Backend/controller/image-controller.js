@@ -65,24 +65,30 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// 📁 Ensure tmp folder exists (Render safe)
+const tmpDir = path.join(__dirname, '..', 'uploads');
+if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true });
+
 // 📁 Multer temp storage
 const upload = multer({
-  dest: path.join(__dirname, '..', 'tmp'), // temporary folder
+  dest: tmpDir,
 });
 
 // 📤 Upload image to Cloudinary
 export const uploadImage = [
-  upload.single('image'),
+  upload.single('file'), // <-- Accept field name 'file'
   async (req, res) => {
     try {
       if (!req.file) return res.status(400).json({ msg: 'No file uploaded' });
 
       const result = await cloudinary.uploader.upload(req.file.path, {
-        folder: 'blog_images', // optional folder name in Cloudinary
+        folder: 'blog_images',
       });
 
       // Delete temp file
-      fs.unlink(req.file.path, () => {});
+      fs.unlink(req.file.path, (err) => {
+        if (err) console.error('Temp file deletion error:', err);
+      });
 
       // Save URL in MongoDB
       const image = new ImageModel({
@@ -98,7 +104,7 @@ export const uploadImage = [
       });
     } catch (error) {
       console.error('❌ Upload error:', error);
-      res.status(500).json({ msg: 'Upload failed', error: error.message });
+      res.status(500).json({ msg: 'Upload failed', error: error.message, stack: error.stack });
     }
   },
 ];
