@@ -1,4 +1,4 @@
-/ Banner.jsx - RESPONSIVE
+
 import React from 'react'
 import { Box, Typography, styled, useTheme, useMediaQuery } from '@mui/material';
 
