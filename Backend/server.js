@@ -16,7 +16,7 @@ const app = express();
 
 // CORS Configuration
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'https://ltce-blog.vercel.app',
+  origin: process.env.FRONTEND_URL,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -51,7 +51,7 @@ app.use((req, res) => {
 // Error Handler
 app.use((err, req, res, next) => {
   console.error('Error:', err);
-  res.status(500).json({ 
+  res.status(500).json({
     isSuccess: false,
     msg: 'Server Error',
     error: process.env.NODE_ENV === 'production' ? 'Error' : err.message
@@ -61,9 +61,6 @@ app.use((err, req, res, next) => {
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
   console.log(`🚀 Server running on port ${port}`);
-  console.log(`📍 Backend URL: ${process.env.BACKEND_URL}`);
-  console.log(`🌐 Frontend URL: ${process.env.FRONTEND_URL}`);
-  console.log(`📊 Environment: ${process.env.NODE_ENV}`);
 });
 
 connectToDB();

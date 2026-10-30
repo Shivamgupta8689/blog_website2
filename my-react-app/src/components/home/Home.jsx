@@ -1,58 +1,46 @@
-import React from 'react'
+import React from 'react';
 import Banner from '../banner/Banner';
 import Categories from './Categories';
-import { Grid, useTheme, useMediaQuery } from '@mui/material'; 
+import { Box, Grid } from '@mui/material';
 import Posts from './Posts';
 
 const Home = () => {
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  return (
+    <>
+      <Banner />
 
-    return (
-        <>
-            <Banner />
-            
-            {isMobile ? (
-                // MOBILE VIEW: Categories upar full width, Posts niche 2 per row
-                <Grid container sx={{ width: '100%', padding: 0, margin: 0 }}>
-                    <Grid item xs={12} sx={{ width: '100%', padding: 0 }}>
-                        <Categories />
-                    </Grid>
-                    <Grid 
-                        container 
-                        item 
-                        xs={12}
-                        sx={{ 
-                            width: '100%', 
-                            padding: '8px',
-                            margin: 0
-                        }}
-                    >
-                        <Posts />
-                    </Grid>
-                </Grid>
-            ) : (
-                // DESKTOP VIEW: Categories left, Posts right (4 per row)
-                <Grid container sx={{ width: '100%', padding: 0, margin: 0 }}>
-                    <Grid item lg={2} sx={{ width: '20%' }}>
-                        <Categories />
-                    </Grid>
-                    <Grid 
-                        container 
-                        item 
-                        lg={10}
-                        sx={{ 
-                            width: '80%',
-                            padding: '8px',
-                            margin: 0
-                        }}
-                    >
-                        <Posts />
-                    </Grid>
-                </Grid>
-            )}
-        </>
-    )
-}
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', md: 'row' },
+          alignItems: 'flex-start',
+          width: '100%',
+          px: { xs: 1, sm: 2 },
+          py: 2,
+          boxSizing: 'border-box',
+        }}
+      >
+        {/* Left Sidebar: Fixed Clean Width bina kisi faltu gap ke */}
+        <Box
+          sx={{
+            width: { xs: '100%', md: '210px', lg: '230px' },
+            flexShrink: 0,
+            mr: { xs: 0, md: 2 }, // Sirf 16px ka controlled gap sidebar aur cards ke beech
+            mb: { xs: 2, md: 0 },
+          }}
+        >
+          <Categories />
+        </Box>
 
-export default Home
+        {/* Right Section: Posts Card Container */}
+        <Box sx={{ flexGrow: 1, minWidth: 0, width: '100%' }}>
+          <Grid container spacing={2}>
+            <Posts />
+          </Grid>
+        </Box>
+      </Box>
+    </>
+  );
+};
+
+export default Home;

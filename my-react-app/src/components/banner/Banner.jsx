@@ -1,108 +1,81 @@
+import { Box, Typography, styled, useTheme } from '@mui/material';
+import SchoolIcon from '@mui/icons-material/School';
 
-import React from 'react'
-import { Box, Typography, styled, useTheme, useMediaQuery } from '@mui/material';
+const BannerImage = styled(Box)`
+  width: 100%;
+  height: 400px;
+  position: relative;
+  overflow: hidden;
+  background-image: url('https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80');
+  background-size: cover;
+  background-position: center 30%;
 
-const Image = styled(Box)(({ theme }) => `
-    background: url(https://ltce.in/images/about-video1.jpg) center/55% repeat-x #000;
-    background-size: cover;
-    background-attachment: fixed;
-    width: 100%;
-    min-height: 50vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    padding: 20px;
-    
-    ${theme.breakpoints.up('lg')} {
-        height: 50vh;
-        padding: 40px 20px;
-    }
-    
-    ${theme.breakpoints.between('sm', 'lg')} {
-        min-height: 45vh;
-        padding: 30px 20px;
-    }
-    
-    ${theme.breakpoints.down('sm')} {
-        min-height: 40vh;
-        padding: 25px 15px;
-    }
-    
-    @media (max-width: 400px) {
-        min-height: 35vh;
-        padding: 20px 10px;
-    }
-`);
+  @media (max-width: 600px) {
+    height: 260px;
+  }
+`;
 
-const Heading = styled(Typography)(({ theme }) => `
-    font-size: 70px;
-    color: #FFFFFF;
-    line-height: 1;
-    font-weight: 700;
-    text-align: center;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    margin-bottom: 20px;
-    
-    ${theme.breakpoints.up('lg')} {
-        font-size: 70px;
-        margin-bottom: 25px;
-    }
-    
-    ${theme.breakpoints.between('sm', 'lg')} {
-        font-size: 50px;
-        margin-bottom: 20px;
-    }
-    
-    ${theme.breakpoints.down('sm')} {
-        font-size: 36px;
-        margin-bottom: 15px;
-    }
-    
-    @media (max-width: 400px) {
-        font-size: 28px;
-        margin-bottom: 12px;
-        line-height: 1.2;
-    }
-`);
+const Overlay = styled(Box)`
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  gap: 12px;
+`;
 
-const Subheading = styled(Typography)(({ theme }) => `
-    font-size: 20px;
-    background: #FFFFFF;
-    color: #000;
-    padding: 12px 20px;
-    border-radius: 4px;
-    text-align: center;
-    font-weight: 500;
-    max-width: 600px;
-    
-    ${theme.breakpoints.up('lg')} {
-        font-size: 20px;
-        padding: 15px 25px;
-    }
-    
-    ${theme.breakpoints.between('sm', 'lg')} {
-        font-size: 18px;
-        padding: 12px 20px;
-    }
-    
-    ${theme.breakpoints.down('sm')} {
-        font-size: 16px;
-        padding: 10px 15px;
-    }
-    
-    @media (max-width: 400px) {
-        font-size: 14px;
-        padding: 8px 12px;
-    }
-`);
+const CollegeTitle = styled(Typography)`
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.7), 0 0px 40px rgba(0,0,0,0.5);
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  max-width: 820px;
+`;
+
+const Tagline = styled(Box)`
+  background: rgba(245, 158, 11, 0.85);
+  backdrop-filter: blur(4px);
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 6px 18px;
+  border-radius: 100px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+`;
 
 const Banner = () => {
-  return (
-    <Image>
-        
-    </Image>
-  )
-}
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
-export default Banner
+  return (
+    <BannerImage>
+      {/* Gradient overlay — darker in dark mode */}
+      <Box sx={{
+        position: 'absolute', inset: 0,
+        background: isDark
+          ? 'linear-gradient(to bottom, rgba(5,12,26,0.55) 0%, rgba(5,12,26,0.82) 100%)'
+          : 'linear-gradient(to bottom, rgba(13,27,78,0.45) 0%, rgba(13,27,78,0.78) 100%)',
+        transition: 'background 0.3s ease',
+      }} />
+
+      <Overlay>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <SchoolIcon sx={{ color: '#fbbf24', fontSize: { xs: 28, sm: 36 } }} />
+          <CollegeTitle variant="h2" sx={{ fontSize: { xs: '1.4rem', sm: '2rem', md: '2.6rem' } }}>
+            Lokmanya Tilak College of Engineering
+          </CollegeTitle>
+        </Box>
+        <Tagline>Official Blog &amp; Notice Portal</Tagline>
+      </Overlay>
+    </BannerImage>
+  );
+};
+
+export default Banner;

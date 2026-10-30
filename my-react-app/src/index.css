@@ -1,68 +1,230 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+/* ============================================================
+   LTCE Blog — Global Design System  (Light + Dark)
+   ============================================================ */
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+/* --- Google Fonts already loaded in index.html --- */
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+/* ─── LIGHT THEME TOKENS ───────────────────────────────────────── */
+:root,
+[data-theme="light"] {
+  /* Primary : Deep Blue */
+  --primary-900: #0d1f5c;
+  --primary-800: #0d2b6e;
+  --primary-700: #1a3a8a;
+  --primary-600: #1e45a8;
+  --primary-500: #2563eb;
+  --primary-400: #3b82f6;
+  --primary-200: #bfdbfe;
+  --primary-100: #dbeafe;
+  --primary-50:  #eff6ff;
+
+  /* Accent : Warm Gold */
+  --accent-600: #d97706;
+  --accent-500: #f59e0b;
+  --accent-400: #fbbf24;
+  --accent-100: #fef3c7;
+
+  /* Neutrals */
+  --gray-900: #111827;
+  --gray-800: #1f2937;
+  --gray-700: #374151;
+  --gray-600: #4b5563;
+  --gray-500: #6b7280;
+  --gray-400: #9ca3af;
+  --gray-300: #d1d5db;
+  --gray-200: #e5e7eb;
+  --gray-100: #f3f4f6;
+  --gray-50:  #f9fafb;
+
+  /* Semantic surface tokens */
+  --color-bg:             #f9fafb;
+  --color-surface:        #ffffff;
+  --color-surface-raised: #ffffff;
+  --color-border:         #e5e7eb;
+  --color-divider:        #e5e7eb;
+
+  /* Text */
+  --color-text-primary:   #111827;
+  --color-text-secondary: #4b5563;
+  --color-text-muted:     #9ca3af;
+  --color-text-inverse:   #ffffff;
+
+  /* Component-level */
+  --color-navbar-bg:    linear-gradient(135deg, #0d2b6e 0%, #1a3a8a 100%);
+  --color-card-bg:      #ffffff;
+  --color-card-border:  #f0f0f0;
+  --color-card-shadow:  0 2px 10px rgba(0,0,0,0.07);
+  --color-card-hover-shadow: 0 10px 28px rgba(37,99,235,0.16);
+  --color-input-bg:     #ffffff;
+  --color-input-border: #e5e7eb;
+  --color-sidebar-bg:   #ffffff;
+  --color-sidebar-item-hover: #eff6ff;
+
+  /* Feedback */
+  --color-error-bg:   #fef2f2;
+  --color-error-text: #b91c1c;
+  --color-success-bg: #f0fdf4;
+  --color-success-text: #15803d;
+
+  /* Page-level login bg */
+  --color-login-page-bg: linear-gradient(135deg, #0d2b6e 0%, #1e45a8 50%, #2563eb 100%);
+
+  /* Typography */
+  --font-sans:    'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Poppins', 'Inter', sans-serif;
+
+  /* Transitions */
+  --transition-fast:   all 0.15s ease;
+  --transition-theme:  background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+
+  /* Shadows */
+  --shadow-sm:   0 1px 2px 0 rgba(0,0,0,0.05);
+  --shadow-md:   0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+  --shadow-lg:   0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+  --shadow-xl:   0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+
+  /* Border radius */
+  --radius-sm:  4px;
+  --radius-md:  8px;
+  --radius-lg:  12px;
+  --radius-xl:  16px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  --navbar-height: 64px;
+}
+
+/* ─── DARK THEME TOKENS ────────────────────────────────────────── */
+[data-theme="dark"] {
+  /* Primary stays same (blue looks good on dark) */
+  --primary-100: #1e3a5f;
+  --primary-50:  #172b46;
+
+  /* Neutrals flip */
+  --gray-900: #f3f4f6;
+  --gray-800: #e5e7eb;
+  --gray-700: #d1d5db;
+  --gray-600: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-400: #4b5563;
+  --gray-300: #374151;
+  --gray-200: #2d3748;
+  --gray-100: #243044;
+  --gray-50:  #1a2436;
+
+  /* Semantic surface tokens */
+  --color-bg:             #141d2e;
+  --color-surface:        #1e2a3e;
+  --color-surface-raised: #253448;
+  --color-border:         #2d3d56;
+  --color-divider:        #2d3d56;
+
+  /* Text */
+  --color-text-primary:   #e8eaf0;
+  --color-text-secondary: #9daec4;
+  --color-text-muted:     #5f7899;
+  --color-text-inverse:   #111827;
+
+  /* Component-level */
+  --color-navbar-bg:    linear-gradient(135deg, #0a1628 0%, #0f2040 100%);
+  --color-card-bg:      #1e2a3e;
+  --color-card-border:  #2d3d56;
+  --color-card-shadow:  0 2px 10px rgba(0,0,0,0.3);
+  --color-card-hover-shadow: 0 10px 28px rgba(37,99,235,0.25);
+  --color-input-bg:     #1a2436;
+  --color-input-border: #2d3d56;
+  --color-sidebar-bg:   #1e2a3e;
+  --color-sidebar-item-hover: #253448;
+
+  /* Feedback */
+  --color-error-bg:   #2d1515;
+  --color-error-text: #f87171;
+  --color-success-bg: #0d2918;
+  --color-success-text: #4ade80;
+
+  /* Page-level login bg */
+  --color-login-page-bg: linear-gradient(135deg, #070e1a 0%, #0d1f3c 50%, #0f2a5e 100%);
+}
+
+/* ─── Reset & Base ──────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+  /* smooth theme transitions */
+  transition: var(--transition-theme);
 }
 
 body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg);
+  min-height: 100vh;
   margin: 0;
+  transition: var(--transition-theme);
+}
+
+#root {
   display: flex;
-  place-items: center;
-  min-width: 320px;
+  flex-direction: column;
   min-height: 100vh;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* ─── Typography ─────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--color-text-primary);
+  transition: color 0.2s ease;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+p   { color: var(--color-text-secondary); line-height: 1.75; }
+img { max-width: 100%; display: block; }
+a   { color: var(--primary-500); text-decoration: none; }
+a:hover { color: var(--primary-700); }
+
+/* ─── Autofill — dark-mode safe ──────────────────────────────────── */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 40px var(--color-input-bg) inset !important;
+  -webkit-text-fill-color: var(--color-text-primary) !important;
+  caret-color: var(--color-text-primary);
+  transition: background-color 9999s !important;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+/* ─── Scrollbar ──────────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-thumb { background: var(--primary-400); border-radius: var(--radius-full); }
+
+/* ─── Skeleton Pulse ─────────────────────────────────────────────── */
+@keyframes skeleton-pulse {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ─── Fade-up animation ──────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── react-hot-toast overrides (dark theme aware) ───────────────── */
+[data-theme="dark"] .react-hot-toast,
+[data-theme="dark"] [data-visible] {
+  --toast-bg: #1e2a3e !important;
+  --toast-color: #e8eaf0 !important;
 }

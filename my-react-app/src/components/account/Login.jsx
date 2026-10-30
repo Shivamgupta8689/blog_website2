@@ -1,431 +1,420 @@
-import React, { useState, useContext } from 'react'
-import { Box, TextField, Button, styled, Typography, MenuItem, useMediaQuery, useTheme } from '@mui/material'
+import React, { useState, useContext } from 'react';
+import {
+  Box, TextField, Button, Typography, MenuItem,
+  InputAdornment, IconButton, CircularProgress,
+  styled, useTheme as useMuiTheme,
+} from '@mui/material';
+import PersonIcon from '@mui/icons-material/Person';
+import LockIcon from '@mui/icons-material/Lock';
+import BadgeIcon from '@mui/icons-material/Badge';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import SchoolIcon from '@mui/icons-material/School';
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import { toast } from 'react-hot-toast';
 import API from '../../service/api';
 import { DataContext } from '../../context/DataProvider';
 import { useNavigate } from 'react-router-dom';
+import { useThemeMode } from '../../context/ThemeContext';
+import ErrorAlert from '../common/ErrorAlert';
 
-// Responsive Component Container
-const Component = styled(Box)(({ theme }) => `
-    width: 400px;
-    margin: auto;
-    box-shadow: 5px 2px 5px 2px rgb(0 0 0/0.6);
-    border-radius: 4px;
-    background: white;
-    
-    // Large Devices (1200px and above)
-    ${theme.breakpoints.up('lg')} {
-        width: 450px;
-        margin: 40px auto;
-    }
-    
-    // Medium Devices (600px to 1199px)
-    ${theme.breakpoints.between('sm', 'lg')} {
-        width: 380px;
-        margin: 30px auto;
-    }
-    
-    // Small Devices (below 600px)
-    ${theme.breakpoints.down('sm')} {
-        width: 90%;
-        max-width: 350px;
-        margin: 20px auto;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    }
-    
-    // Extra Small Devices (below 400px)
-    @media (max-width: 400px) {
-        width: 95%;
-        max-width: 320px;
-        margin: 15px auto;
-    }
-`);
+// ─── Styled ────────────────────────────────────────────────────────
+const PageWrapper = styled(Box)`
+  min-height: 100vh;
+  background: var(--color-login-page-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  transition: background 0.2s ease;
+`;
 
-// Responsive Image
-const Image = styled('img')(({ theme }) => `
-    width: 100px;
-    height: auto;
-    display: block;
-    margin: 0 auto;
-    padding: 50px 0 0;
-    
-    // Large Devices
-    ${theme.breakpoints.up('lg')} {
-        width: 120px;
-        padding: 60px 0 0;
-    }
-    
-    // Medium Devices
-    ${theme.breakpoints.between('sm', 'lg')} {
-        width: 100px;
-        padding: 40px 0 0;
-    }
-    
-    // Small Devices
-    ${theme.breakpoints.down('sm')} {
-        width: 80px;
-        padding: 30px 0 0;
-    }
-    
-    // Extra Small Devices
-    @media (max-width: 400px) {
-        width: 70px;
-        padding: 25px 0 0;
-    }
-`);
+const CardWrapper = styled(Box)(({ theme }) => ({
+  background: theme.palette.background.paper,
+  borderRadius: 20,
+  boxShadow: '0 24px 64px rgba(13,43,110,0.3)',
+  overflow: 'hidden',
+  width: 420,
+  maxWidth: '100%',
+  [theme.breakpoints.down('sm')]: {
+    width: '95%',
+    borderRadius: 16,
+  },
+}));
 
-// Responsive Wrapper
-const Wrapper = styled(Box)(({ theme }) => `
-    padding: 25px 35px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    
-    // Large Devices
-    ${theme.breakpoints.up('lg')} {
-        padding: 30px 40px;
-        gap: 22px;
-    }
-    
-    // Medium Devices
-    ${theme.breakpoints.between('sm', 'lg')} {
-        padding: 25px 30px;
-        gap: 18px;
-    }
-    
-    // Small Devices
-    ${theme.breakpoints.down('sm')} {
-        padding: 20px 20px;
-        gap: 16px;
-    }
-    
-    // Extra Small Devices
-    @media (max-width: 400px) {
-        padding: 16px 16px;
-        gap: 14px;
-    }
-`);
+const CardHeader = styled(Box)`
+  background: linear-gradient(135deg, #0d2b6e 0%, #1a3a8a 100%);
+  padding: 28px 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+`;
 
-// Responsive Login Button
-const LoginButton = styled(Button)(({ theme }) => `
-    text-transform: none;
-    background: #FB641B;
-    color: #fff;
-    height: 48px;
-    border-radius: 2px;
-    font-size: 16px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    
-    &:hover {
-        background: #E85A0C;
-    }
-    
-    // Large Devices
-    ${theme.breakpoints.up('lg')} {
-        height: 52px;
-        font-size: 17px;
-    }
-    
-    // Medium Devices
-    ${theme.breakpoints.between('sm', 'lg')} {
-        height: 48px;
-        font-size: 16px;
-    }
-    
-    // Small Devices
-    ${theme.breakpoints.down('sm')} {
-        height: 44px;
-        font-size: 14px;
-    }
-    
-    // Extra Small Devices
-    @media (max-width: 400px) {
-        height: 40px;
-        font-size: 13px;
-    }
-`);
+const CardBody = styled(Box)`
+  padding: 28px 32px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
 
-// Responsive Signup Button
-const SignupButton = styled(Button)(({ theme }) => `
-    text-transform: none;
-    background: #fff;
-    color: #287400;
-    height: 48px;
-    border-radius: 2px;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
-    font-size: 16px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    
-    &:hover {
-        background: #f5f5f5;
-    }
-    
-    // Large Devices
-    ${theme.breakpoints.up('lg')} {
-        height: 52px;
-        font-size: 17px;
-    }
-    
-    // Medium Devices
-    ${theme.breakpoints.between('sm', 'lg')} {
-        height: 48px;
-        font-size: 16px;
-    }
-    
-    // Small Devices
-    ${theme.breakpoints.down('sm')} {
-        height: 44px;
-        font-size: 14px;
-    }
-    
-    // Extra Small Devices
-    @media (max-width: 400px) {
-        height: 40px;
-        font-size: 13px;
-    }
-`);
+const PrimaryBtn = styled(Button)`
+  height: 48px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: 10px;
+  transition: all 0.25s;
+  &:hover { transform: translateY(-1px); }
+`;
 
-// Error Message
-const Error = styled(Typography)(({ theme }) => `
-    font-size: 12px;
-    color: #ff6161;
-    line-height: 1.2;
-    font-weight: 600;
-    text-align: center;
-    
-    ${theme.breakpoints.down('sm')} {
-        font-size: 11px;
-    }
-    
-    @media (max-width: 400px) {
-        font-size: 10px;
-    }
-`);
+const SecondaryBtn = styled(Button)(({ theme }) => ({
+  border: `2px solid ${theme.palette.divider}`,
+  color: theme.palette.text.secondary,
+  height: 48,
+  borderRadius: 10,
+  '&:hover': {
+    borderColor: theme.palette.primary.main,
+    background: theme.palette.mode === 'dark' ? 'rgba(37,99,235,0.12)' : '#eff6ff',
+    color: theme.palette.primary.main,
+  },
+}));
 
-// Divider Text
-const Text = styled(Typography)(({ theme }) => `
-    color: #878787;
-    font-size: 16px;
-    text-align: center;
-    font-weight: 500;
-    
-    ${theme.breakpoints.up('lg')} {
-        font-size: 17px;
-    }
-    
-    ${theme.breakpoints.down('sm')} {
-        font-size: 14px;
-    }
-    
-    @media (max-width: 400px) {
-        font-size: 12px;
-    }
-`);
+const DividerRow = styled(Box)`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  &::before, &::after { content:''; flex:1; height:1px; background: var(--color-border); }
+`;
 
-// Responsive TextField styles
-const StyledTextField = styled(TextField)(({ theme }) => `
-    & .MuiInput-root {
-        font-size: 15px;
-    }
-    
-    & .MuiInputBase-input {
-        padding: 8px 0;
-    }
-    
-    ${theme.breakpoints.down('sm')} {
-        & .MuiInput-root {
-            font-size: 14px;
-        }
-        
-        & .MuiInputBase-input {
-            padding: 6px 0;
-        }
-    }
-    
-    @media (max-width: 400px) {
-        & .MuiInput-root {
-            font-size: 13px;
-        }
-    }
-`);
+// ─── Validators ────────────────────────────────────────────────────
+const validate = (fields, isSignup) => {
+  const errs = {};
+  if (!fields.user_type)               errs.user_type = 'Please select a role.';
+  if (!fields.username?.trim())        errs.username  = 'Username is required.';
+  else if (fields.username.trim().length < 3) errs.username = 'Username must be at least 3 characters.';
+  else if (/\s/.test(fields.username.trim())) errs.username = 'Username must not contain spaces.';
+  if (!fields.password)                errs.password  = 'Password is required.';
+  else if (fields.password.length < 6) errs.password  = 'Password must be at least 6 characters.';
+  if (isSignup && !fields.name?.trim()) errs.name     = 'Full name is required.';
+  return errs;
+};
 
-const signupInitialValues = {
-    user_type: '',
-    name: '',
-    username: '',
-    password: '',
-}
+// ─── Initial state ─────────────────────────────────────────────────
+const signupInit = { user_type: '', name: '', username: '', password: '' };
+const loginInit  = { user_type: '', username: '', password: '' };
 
-const loginInitialValues = {
-    user_type: '',
-    username: '',
-    password: '',
-}
+// ─── Component ─────────────────────────────────────────────────────
+const Login = ({ isUserAuthenticated }) => {
+  const muiTheme = useMuiTheme();
+  const { isDark, toggleTheme } = useThemeMode();
 
-const Login = ({isUserAuthenticated}) => {
-    const imageURL = 'https://www.sesta.it/wp-content/uploads/2021/03/logo-blog-sesta-trasparente.png';
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [tab, setTab] = useState('login');       // 'login' | 'signup'
+  const [signup, setSignup] = useState(signupInit);
+  const [login,  setLogin]  = useState(loginInit);
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-    const [account, toggleAccount] = useState('login')
-    const [signup, setSignup] = useState(signupInitialValues);
-    const [login, setLogin] = useState(loginInitialValues)
-    const [error, setError] = useState('')
-    const {setAccount} = useContext(DataContext)
-    const navigate = useNavigate();
+  // Field-level validation errors
+  const [loginErrs,  setLoginErrs]  = useState({});
+  const [signupErrs, setSignupErrs] = useState({});
 
-    const onInputChange = (e) =>{
-        setSignup({...signup, [e.target.name]: e.target.value})
-    }
-    
-    const onValueChange = (e) =>{
-        setLogin({...login, [e.target.name]: e.target.value})
-    }
+  // Inline top-of-form alert
+  const [inlineError, setInlineError] = useState('');
 
-    const signupUser = async () => {
-        const { user_type, name, username, password } = signup;
-      
-        if (!user_type || !name || !username || !password) {
-          setError("Please fill all fields");
-          return;
-        }
-      
-        let response = await API.userSignup({ user_type, name, username, password });
-      
-        if(response.isSuccess) {
-          setError('');
-          setSignup(signupInitialValues);
-          setLogin(loginInitialValues);
-          toggleAccount('login');
-        } else {
-          setError('Something went wrong, please try again later');
-        }
+  const { setAccount } = useContext(DataContext);
+  const navigate = useNavigate();
+
+  const isLogin = tab === 'login';
+
+  // ── Field change handlers (clears inline error) ──────────────────
+  const onLoginChange = (e) => {
+    setLogin({ ...login, [e.target.name]: e.target.value });
+    setLoginErrs(prev => ({ ...prev, [e.target.name]: '' }));
+    setInlineError('');
+  };
+  const onSignupChange = (e) => {
+    setSignup({ ...signup, [e.target.name]: e.target.value });
+    setSignupErrs(prev => ({ ...prev, [e.target.name]: '' }));
+    setInlineError('');
+  };
+
+  // ── Login submit ─────────────────────────────────────────────────
+  const loginUser = async () => {
+    const errs = validate(login, false);
+    if (Object.keys(errs).length) { setLoginErrs(errs); return; }
+
+    const payload = {
+      user_type: login.user_type,
+      username:  login.username.trim().toLowerCase(),
+      password:  login.password,
+    };
+
+    setLoading(true);
+    setInlineError('');
+    try {
+      const response = await API.userLogin(payload);
+      if (response.isSuccess) {
+        setLogin(loginInit);
+        sessionStorage.setItem('accessToken',  `Bearer ${response.data.accessToken}`);
+        sessionStorage.setItem('refreshToken', `Bearer ${response.data.refreshToken}`);
+        setAccount({
+          user_type: response.data.user_type,
+          username:  response.data.username,
+          name:      response.data.name,
+        });
+        isUserAuthenticated(true);
+        toast.success('Login successful! Welcome back 👋');
+        navigate('/');
+      } else {
+        const msg = 'Incorrect username or password.';
+        setInlineError(msg);
+        toast.error(msg);
       }
+    } catch (err) {
+      const msg = err?.serverMsg || err?.msg?.message || 'Login failed. Please try again.';
+      setInlineError(msg);
+      toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      const loginUser = async () => {
-        const {user_type, username, password } = login;
-      
-        if (!user_type || !username || !password) {
-          setError("Please fill all fields");
-          return;
-        }
-      
-        console.log("Sending login data:", {user_type, username, password });
-      
-        let response = await API.userLogin({ user_type, username, password });
-        console.log(response.data)
-        if(response.isSuccess) {
-          setError('');
-          setLogin(loginInitialValues);
-          sessionStorage.setItem('accessToken',`Bearer ${response.data.accessToken}`);
-          sessionStorage.setItem('refreshToken',`Bearer ${response.data.refreshToken}`);
+  // ── Signup submit ────────────────────────────────────────────────
+  const signupUser = async () => {
+    const errs = validate(signup, true);
+    if (Object.keys(errs).length) { setSignupErrs(errs); return; }
 
-          setAccount({user_type: response.data.user_type, username: response.data.username, name: response.data.name});
-          isUserAuthenticated(true);
-          navigate('/')
-        } else {
-          setError('Something went wrong, please try again later');
-        }
+    const payload = {
+      user_type: signup.user_type,
+      name:      signup.name.trim(),
+      username:  signup.username.trim().toLowerCase(),
+      password:  signup.password,
+    };
+
+    setLoading(true);
+    setInlineError('');
+    try {
+      const response = await API.userSignup(payload);
+      if (response.isSuccess) {
+        setSignup(signupInit);
+        toast.success('Account created! Please log in.');
+        setTab('login');
+      } else {
+        const msg = 'Registration failed. Please try again.';
+        setInlineError(msg);
+        toast.error(msg);
       }
-      
+    } catch (err) {
+      const msg = err?.serverMsg || err?.msg?.message || 'Registration failed. Please try again.';
+      setInlineError(msg);
+      toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ── Submit on Enter ──────────────────────────────────────────────
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !loading) isLogin ? loginUser() : signupUser();
+  };
+
+  // ── Shared field props ───────────────────────────────────────────
+  const fieldSx = {
+    '& .MuiOutlinedInput-root': {
+      bgcolor: muiTheme.palette.mode === 'dark' ? '#1a2436' : '#fff',
+    },
+  };
+
   return (
-    <Component>
-        <Box>
-            <Image src={imageURL} alt="login"/>
-            {
-                account === 'login' ? 
-             <Wrapper>
-             <StyledTextField
-                 select
-                 variant="standard"
-                 name="user_type"
-                 onChange={(e)=>onValueChange(e)}
-                 label="Select User Type"
-                 value={login.user_type}
-                 fullWidth
-             >
-                 <MenuItem value="Student">Student</MenuItem>
-                 <MenuItem value="Teacher">Teacher</MenuItem>
-             </StyledTextField>
-             <StyledTextField 
-                 variant='standard' 
-                 onChange={(e)=>onValueChange(e)} 
-                 name='username' 
-                 label="Enter Username"
-                 value={login.username}
-                 fullWidth
-             />
-             <StyledTextField 
-                 variant='standard' 
-                 label="Enter Password" 
-                 onChange={(e)=>onValueChange(e)} 
-                 name='password'
-                 type='password'
-                 value={login.password}
-                 fullWidth
-             />
-             {error && <Error>{error}</Error>}
-             <LoginButton variant='contained' onClick={()=>loginUser()}>Login</LoginButton>
-             <Text>OR</Text>
-             <SignupButton onClick={()=>{
-                 setError('');
-                 toggleAccount('signup')
-             }}>Create an account</SignupButton>
-             </Wrapper> 
+    <PageWrapper>
+      <CardWrapper>
+        {/* ── Card Header ─────────────────────────────────────── */}
+        <CardHeader>
+          {/* Theme toggle inside header (visible on login page too) */}
+          <IconButton
+            onClick={toggleTheme}
+            size="small"
+            aria-label="Toggle theme"
+            sx={{
+              position: 'absolute', top: 12, right: 12,
+              color: 'rgba(255,255,255,0.7)',
+              border: '1px solid rgba(255,255,255,0.2)',
+              borderRadius: 1.5,
+              p: '4px',
+              '&:hover': { color: '#fbbf24', borderColor: '#fbbf24' },
+            }}
+          >
+            {isDark ? <LightModeIcon sx={{ fontSize: 17 }} /> : <DarkModeIcon sx={{ fontSize: 17 }} />}
+          </IconButton>
 
-            :
+          <Box sx={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <SchoolIcon sx={{ color: '#fbbf24', fontSize: 30 }} />
+          </Box>
+          <Typography sx={{ fontFamily: "'Poppins',sans-serif", fontWeight: 800, fontSize: '1.15rem', color: '#fff', textAlign: 'center', lineHeight: 1.2 }}>
+            LTCE Blog Portal
+          </Typography>
+          <Typography sx={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.65)', textAlign: 'center' }}>
+            {isLogin ? 'Sign in to your account' : 'Create a new account'}
+          </Typography>
+        </CardHeader>
 
-            <Wrapper>
-            <StyledTextField
-                 select
-                 variant="standard"
-                 name="user_type"
-                 onChange={(e)=>onInputChange(e)}
-                 label="Select User Type"
-                 value={signup.user_type}
-                 fullWidth
-             >
-                 <MenuItem value="Student">Student</MenuItem>
-                 <MenuItem value="Teacher">Teacher</MenuItem>
-             </StyledTextField>
-            <StyledTextField 
-                 variant='standard' 
-                 onChange={(e)=>onInputChange(e)} 
-                 name='name' 
-                 label="Enter your name"
-                 value={signup.name}
-                 fullWidth
-             />
-            <StyledTextField 
-                 variant='standard' 
-                 onChange={(e)=>onInputChange(e)} 
-                 name='username' 
-                 label="Enter Username"
-                 value={signup.username}
-                 fullWidth
-             />
-            <StyledTextField 
-                 variant='standard' 
-                 onChange={(e)=>onInputChange(e)} 
-                 name='password' 
-                 label="Enter Password"
-                 type='password'
-                 value={signup.password}
-                 fullWidth
-             />
-            {error && <Error>{error}</Error>}
-            <SignupButton onClick={()=>signupUser()}>Signup</SignupButton>
-            <Text>OR</Text>
-            <LoginButton onClick={()=>{
-                 setError('');
-                 toggleAccount('login')
-            }} variant='contained'>Already have an account</LoginButton>
-            </Wrapper>
-            }
-        </Box>
-    </Component>
-  )
-}
+        {/* ── Card Body ───────────────────────────────────────── */}
+        <CardBody onKeyDown={handleKeyDown}>
+          {/* Inline error alert */}
+          <ErrorAlert
+            message={inlineError}
+            severity="error"
+            onClose={() => setInlineError('')}
+          />
 
-export default Login
+          {/* Role selector */}
+          <TextField
+            select
+            label="I am a..."
+            name="user_type"
+            value={isLogin ? login.user_type : signup.user_type}
+            onChange={isLogin ? onLoginChange : onSignupChange}
+            fullWidth
+            error={Boolean(isLogin ? loginErrs.user_type : signupErrs.user_type)}
+            helperText={isLogin ? loginErrs.user_type : signupErrs.user_type}
+            sx={fieldSx}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SupervisorAccountIcon sx={{ color: 'text.disabled', fontSize: 20 }} />
+                </InputAdornment>
+              ),
+            }}
+          >
+            <MenuItem value="Student">Student</MenuItem>
+            <MenuItem value="Teacher">Teacher</MenuItem>
+          </TextField>
+
+          {/* Full Name — signup only */}
+          {!isLogin && (
+            <TextField
+              label="Full Name"
+              name="name"
+              value={signup.name}
+              onChange={onSignupChange}
+              fullWidth
+              error={Boolean(signupErrs.name)}
+              helperText={signupErrs.name}
+              sx={fieldSx}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <BadgeIcon sx={{ color: 'text.disabled', fontSize: 20 }} />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          )}
+
+          {/* Username */}
+          <TextField
+            label="Username"
+            name="username"
+            value={isLogin ? login.username : signup.username}
+            onChange={isLogin ? onLoginChange : onSignupChange}
+            fullWidth
+            error={Boolean(isLogin ? loginErrs.username : signupErrs.username)}
+            helperText={isLogin ? loginErrs.username : signupErrs.username}
+            sx={fieldSx}
+            inputProps={{ autoCapitalize: 'none', autoComplete: 'username' }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <PersonIcon sx={{ color: 'text.disabled', fontSize: 20 }} />
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          {/* Password */}
+          <TextField
+            label="Password"
+            name="password"
+            type={showPassword ? 'text' : 'password'}
+            value={isLogin ? login.password : signup.password}
+            onChange={isLogin ? onLoginChange : onSignupChange}
+            fullWidth
+            error={Boolean(isLogin ? loginErrs.password : signupErrs.password)}
+            helperText={isLogin ? loginErrs.password : signupErrs.password}
+            sx={fieldSx}
+            inputProps={{ autoComplete: isLogin ? 'current-password' : 'new-password' }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LockIcon sx={{ color: 'text.disabled', fontSize: 20 }} />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowPassword(p => !p)}
+                    edge="end"
+                    size="small"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword
+                      ? <VisibilityOffIcon sx={{ fontSize: 19, color: 'text.disabled' }} />
+                      : <VisibilityIcon   sx={{ fontSize: 19, color: 'text.disabled' }} />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          {/* Primary action */}
+          {isLogin ? (
+            <PrimaryBtn
+              fullWidth
+              variant="contained"
+              onClick={loginUser}
+              disabled={loading}
+              sx={{ background: 'linear-gradient(135deg, #1a3a8a 0%, #2563eb 100%)' }}
+            >
+              {loading
+                ? <><CircularProgress size={18} sx={{ color: '#fff', mr: 1 }} /> Logging in...</>
+                : 'Login'}
+            </PrimaryBtn>
+          ) : (
+            <PrimaryBtn
+              fullWidth
+              variant="contained"
+              onClick={signupUser}
+              disabled={loading}
+              sx={{ background: 'linear-gradient(135deg, #065f46 0%, #059669 100%)' }}
+            >
+              {loading
+                ? <><CircularProgress size={18} sx={{ color: '#fff', mr: 1 }} /> Creating account...</>
+                : 'Create Account'}
+            </PrimaryBtn>
+          )}
+
+          {/* OR divider */}
+          <DividerRow>
+            <Typography sx={{ fontSize: '0.78rem', color: 'text.disabled', fontWeight: 600 }}>OR</Typography>
+          </DividerRow>
+
+          {/* Switch mode */}
+          {isLogin ? (
+            <SecondaryBtn fullWidth onClick={() => { setInlineError(''); setLoginErrs({}); setTab('signup'); }}>
+              Create a New Account
+            </SecondaryBtn>
+          ) : (
+            <SecondaryBtn fullWidth onClick={() => { setInlineError(''); setSignupErrs({}); setTab('login'); }}>
+              Already have an account? Login
+            </SecondaryBtn>
+          )}
+        </CardBody>
+      </CardWrapper>
+    </PageWrapper>
+  );
+};
+
+export default Login;
